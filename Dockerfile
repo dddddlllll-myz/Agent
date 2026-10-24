@@ -1,0 +1,53 @@
+FROM python:3.13.2-slim
+
+# Set working directory
+WORKDIR /app
+
+# Set non-sensitive environment variables
+ARG APP_ENV=production
+
+ENV APP_ENV=${APP_ENV} \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100
+
+# 切换 apt 源为阿里云镜像（加速国内服务器构建）
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && pip install --upgrade pip -i https://mirrors.aliyun.com/pypi/simple/ \
+    && pip install uv -i https://mirrors.aliyun.com/pypi/simple/ \
+    && rm -rf /var/lib/apt/lists/*
+
+# 同时拷贝锁定文件，确保容器与本地安装完全相同的版本
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --index-url https://mirrors.aliyun.com/pypi/simple/
+
+# Copy the application
+COPY . .
+
+# Make entrypoint script executable - do this before changing user
+RUN chmod +x /app/scripts/docker-entrypoint.sh
+
+# Create a non-root user
+RUN useradd -m appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Create log directory
+RUN mkdir -p /app/logs
+
+# Default port
+EXPOSE 8000
+
+# Log the environment we're using
+RUN echo "Using ${APP_ENV} environment"
+
+# Command to run the application
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
+CMD ["/app/.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

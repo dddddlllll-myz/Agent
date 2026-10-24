@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api *)",
+      "Bash(uv run *)",
+      "Bash(uv sync *)",
+      "Bash(mkdir -p \"/Users/liushanshan/personal-project/github项目/fastapi-langgraph-agent-production-ready-template-master/.claude/commands\")",
+      "Bash(python .claude/daily-report/scripts/extract_git_commits.py --since \"today 00:00\")"
+    ]
+  }
+}
