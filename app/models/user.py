@@ -7,6 +7,7 @@ from typing import (
 )
 
 import bcrypt
+
 from sqlmodel import (
     Field,
     Relationship,

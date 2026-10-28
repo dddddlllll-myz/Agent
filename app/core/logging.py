@@ -225,7 +225,8 @@ def prepare_console_event_dict(logger: Any, method_name: str, event_dict: Mutabl
 
 
 def render_text_log(logger: Any, method_name: str, event_dict: MutableMapping[str, Any]) -> str:
-    """渲染适合本地调试阅读的彩色 text 日志.
+    """
+    渲染适合本地调试阅读的彩色 text 日志.
 
     格式：
         {timestamp} - [{env}] - {LEVEL} - [trace:{id} span:{id}] - [{module.func:line}] - {事件}  {参数JSON}
