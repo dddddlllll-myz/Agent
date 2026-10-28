@@ -46,13 +46,11 @@ from app.utils.sanitization import (
 router = APIRouter()
 # 这是 FastAPI 提供的认证依赖工具。它的作用是：从请求头里读取 Bearer Token。
 security = HTTPBearer()
-# 这是创建数据库服务对象。（作者自己创建）所以这里先创建一个 DatabaseService 实例，后面的函数复用它。 负责操作数据库里的用户和 session。
+# 这是创建数据库服务对象。创建一个 DatabaseService 实例，后面的函数复用它。 负责操作数据库里的用户和 session。
 db_service = DatabaseService()
 
 
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-) -> User:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security),) -> User:
     """从 token 中获取当前用户.
 
     参数：

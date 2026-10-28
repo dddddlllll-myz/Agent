@@ -49,6 +49,7 @@ def load_env_file():
     """加载当前环境对应的 .env 文件."""
     env = get_environment()
     print(f"Loading environment: {env}")
+    """获取项目根目录"""
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
     # 按优先级定义环境变量文件
