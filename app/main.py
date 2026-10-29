@@ -31,6 +31,7 @@ from app.core.middleware import (
 from app.core.observability import langfuse_init
 from app.services.database import database_service
 from app.services.memory import memory_service
+from app.services import rag
 
 # 加载环境变量
 load_dotenv()
@@ -65,6 +66,12 @@ async def lifespan(app: FastAPI):
         await memory_service.initialize()
     except Exception as e:
         logger.exception("memory_service_pre_warm_failed", error=str(e))
+
+    # 预建 RAG 知识库表（幂等）
+    try:
+        rag.ensure_table()
+    except Exception as e:
+        logger.exception("rag_table_init_failed", error=str(e))
 
     yield
 

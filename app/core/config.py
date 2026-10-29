@@ -171,6 +171,21 @@ class Settings:
         self.LONG_TERM_MEMORY_EMBEDDER_MODEL = os.getenv("LONG_TERM_MEMORY_EMBEDDER_MODEL", "text-embedding-v4")
         self.LONG_TERM_MEMORY_EMBEDDING_DIMS = int(os.getenv("LONG_TERM_MEMORY_EMBEDDING_DIMS", "1024"))
         self.LONG_TERM_MEMORY_COLLECTION_NAME = os.getenv("LONG_TERM_MEMORY_COLLECTION_NAME", "longterm_memory")
+
+        # 分层召回 (改进一)
+        self.RECALL_FETCH_K = int(os.getenv("RECALL_FETCH_K", "20"))
+        self.RECALL_SCORE_THRESHOLD = float(os.getenv("RECALL_SCORE_THRESHOLD", "0.15"))
+        self.RECALL_TOKEN_BUDGET = int(os.getenv("RECALL_TOKEN_BUDGET", "1500"))
+        self.RECALL_L1_MAX_ITEMS = int(os.getenv("RECALL_L1_MAX_ITEMS", "8"))
+        self.RECALL_L0_OVERFLOW_ITEMS = int(os.getenv("RECALL_L0_OVERFLOW_ITEMS", "12"))
+
+        # 文档 RAG (改进二)
+        self.RAG_TABLE_NAME = os.getenv("RAG_TABLE_NAME", "knowledge_chunks")
+        self.RAG_CHUNK_SIZE = int(os.getenv("RAG_CHUNK_SIZE", "500"))
+        self.RAG_CHUNK_OVERLAP = int(os.getenv("RAG_CHUNK_OVERLAP", "80"))
+        self.RAG_TOP_K = int(os.getenv("RAG_TOP_K", "4"))
+        self.RAG_SCORE_THRESHOLD = float(os.getenv("RAG_SCORE_THRESHOLD", "0.3"))
+        
         # JWT 配置
         self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "")
         self.JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")

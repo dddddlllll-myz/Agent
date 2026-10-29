@@ -1,4 +1,5 @@
 """基于 mem0 和 pgvector 的长期记忆服务，带可选缓存层."""
+from app.services.recall import RecallConfig, build_layered_context
 
 from mem0 import AsyncMemory
 
@@ -93,9 +94,17 @@ class MemoryService:
 
             logger.info("开始检索长期记忆", user_id=user_id)
             memory = await self._get_memory()
-            results = await memory.search(user_id=str(user_id), query=query)
-            result = "\n".join([f"* {r['memory']}" for r in results["results"]])
-            result_count = len(results["results"])
+            results = await memory.search(user_id=str(user_id), query=query, limit=settings.RECALL_FETCH_KEYWORDS)
+            result = build_layered_context(
+                results["results"],
+                RecallConfig(
+                    score_threshold=settings.RECALL_SCORE_THRESHOLD,
+                    token_budget=settings.RECALL_TOKEN_BUDGET,
+                    l1_max_items=settings.RECALL_L1_MAX_ITEMS,
+                    l0_overflow_items=settings.RECALL_L0_OVERFLOW_ITEMS,
+                ),
+            )
+            result_count = result.count("\n") + 1 if result else 0
             logger.info("长期记忆检索完成", user_id=user_id, memory_count=result_count)
 
             # 只缓存非空结果；空结果不缓存，下次仍会查询以防有新记忆写入
